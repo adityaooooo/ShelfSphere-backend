@@ -1,0 +1,11 @@
+{
+  "name": "shelfsphere-backend",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build && node dist/main.js",
+    "start:dev": "npm run build && node dist/main.js",
+    "test": "jest --config ../package.json"
+  }
+}
