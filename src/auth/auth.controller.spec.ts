@@ -1,50 +1,44 @@
-// import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 
-// import { AuthController } from './auth.controller';
-// import { AuthService } from './auth.service';
-// import { UserRole } from '../users/entities/user.entity';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { UserRole } from '../users/entities/user.entity';
 
-// describe('AuthController', () => {
-//   let controller: AuthController;
+describe('AuthController', () => {
+  let controller: AuthController;
 
-//   const mockAuthService = {
-//     register: jest.fn().mockResolvedValue({
-//       message: 'User registered successfully',
-//       user: {
-//         id: 1,
-//         email: 'test@example.com',
-//       },
-//     }),
-//   };
+  const mockAuthService = {
+    login: jest.fn(),
+    register: jest.fn(),
+  };
 
-//   beforeEach(async () => {
-//     const module: TestingModule = await Test.createTestingModule({
-//       controllers: [AuthController],
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+      providers: [
+        {
+          provide: AuthService,
+          useValue: mockAuthService,
+        },
+      ],
+    }).compile();
 
-//       providers: [
-//         {
-//           provide: AuthService,
-//           useValue: mockAuthService,
-//         },
-//       ],
-//     }).compile();
+    controller = module.get<AuthController>(AuthController);
+  });
 
-//     controller = module.get<AuthController>(AuthController);
-//   });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-//   it('should be defined', () => {
-//     expect(controller).toBeDefined();
-//   });
+  it('should return the current user profile from the post me route', () => {
+    const req = {
+      user: {
+        id: 1,
+        email: 'test@example.com',
+        role: UserRole.MEMBER,
+      },
+    };
 
-//   it('should return the current user profile from the post me route', () => {
-//     const req = {
-//       user: {
-//         id: 1,
-//         email: 'test@example.com',
-//         role: UserRole.MEMBER,
-//       },
-//     };
-
-//     expect(controller.getProfilePost(req)).toEqual(req.user);
-//   });
-// });
+    expect(controller.getProfilePost(req)).toEqual(req.user);
+  });
+});

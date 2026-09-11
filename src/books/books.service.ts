@@ -18,6 +18,10 @@ import { Category } from '../categories/entities/category.entity';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
+export interface UploadedBookImage {
+  filename: string;
+}
+
 @Injectable()
 export class BooksService {
   constructor(
@@ -183,4 +187,27 @@ export class BooksService {
         'Book deleted successfully',
     };
   }
+
+
+
+  async uploadImage(
+  id: number,
+  file: UploadedBookImage,
+) {
+  const book = await this.bookRepository.findOne({
+    where: { id },
+  });
+
+  if (!book) {
+    throw new NotFoundException('Book not found');
+  }
+
+  if (!file) {
+    throw new BadRequestException('Image file is required');
+  }
+
+  book.imageUrl = `/uploads/books/${file.filename}`;
+
+  return this.bookRepository.save(book);
+}
 }

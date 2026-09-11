@@ -27,6 +27,12 @@ export class Book {
   @Column()
   author: string;
 
+
+  @Column({
+  nullable: true,
+})
+imageUrl: string;
+
   @Column({
     type: 'text',
     nullable: true,

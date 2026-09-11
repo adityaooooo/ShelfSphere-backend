@@ -24,12 +24,21 @@ export class FinesService {
   ) {}
 
   private toSafeFine(fine: Fine) {
-    const { member, ...safeBorrowRecord } =
-      fine.borrowRecord;
+    const { member, ...safeBorrowRecord } = fine.borrowRecord;
+    const safeMember = member
+      ? {
+          id: member.id,
+          fullName: member.fullName,
+          email: member.email,
+        }
+      : null;
 
     return {
       ...fine,
-      borrowRecord: safeBorrowRecord,
+      borrowRecord: {
+        ...safeBorrowRecord,
+        member: safeMember,
+      },
     };
   }
 

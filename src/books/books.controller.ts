@@ -7,10 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
-import { BooksService } from './books.service';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+import {
+  BooksService,
+  type UploadedBookImage,
+} from './books.service';
 
 import { CreateBookDto } from './dto/create-book.dto';
 import { BookQueryDto } from './dto/book-query.dto';
@@ -45,6 +53,40 @@ export class BooksController {
       createBookDto,
     );
   }
+
+
+  @Post(':id/image')
+@UseGuards(
+  JwtAuthGuard,
+  RolesGuard,
+)
+@Roles(
+  UserRole.ADMIN,
+  UserRole.LIBRARIAN,
+)
+@UseInterceptors(
+  FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './uploads/books',
+      filename: (req, file, callback) => {
+        const extension = file.originalname.split('.').pop();
+        const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}.${extension}`;
+        callback(null, filename);
+      },
+    }),
+  }),
+)
+uploadImage(
+  @Param('id') id: string,
+  @UploadedFile() file: UploadedBookImage,
+) {
+  return this.booksService.uploadImage(
+    Number(id),
+    file,
+  );
+}
+
+
 
   @Get()
   @UseGuards(JwtAuthGuard)

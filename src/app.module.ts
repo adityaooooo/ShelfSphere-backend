@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { resolve } from 'node:path';
 import {
   ConfigModule,
@@ -33,6 +35,11 @@ import { ReportsModule } from './reports/reports.module';
         resolve(process.cwd(), '../.env'),
       ],
     }),
+
+ServeStaticModule.forRoot({
+  rootPath: join(process.cwd(), 'uploads'),
+  serveRoot: '/uploads',
+}),
 
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
